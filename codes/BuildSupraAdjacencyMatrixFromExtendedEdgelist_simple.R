@@ -1,47 +1,78 @@
 library(muxViz)
 library(openxlsx)
 library(igraph)
-
+library(reshape2)
+library(ggplot2)
+library(RColorBrewer)
+library(MASS)  # Load the MASS package for ginv()
 
 mEdges <- read.xlsx("D:/NDSU/PhD Work/Research/IME Research/extended file.xlsx")
 
 # Determine the number of layers
 Layers <- 2
-Nodes<-max(max(mEdges$From_Node), max(mEdges$To_Node))
+Nodes <- max(max(mEdges$From_Node), max(mEdges$To_Node))
 
 Nodes
 Layers
 
 # Build the supra-adjacency matrix
-SA<- BuildSupraAdjacencyMatrixFromExtendedEdgelist(
-  mEdges=mEdges,
+SA <- BuildSupraAdjacencyMatrixFromExtendedEdgelist(
+  mEdges = mEdges,
   Layers = Layers,
   Nodes = Nodes,
   isDirected = TRUE
 )
-plot(SA)
 
-# Create the multilayer network
-network <- graph_from_adjacency_matrix(SA, mode = "directed")
+# Calculate the aggregate network
+AM <- GetAggregateNetworkFromSupraAdjacencyMatrix(SA, Layers, Nodes)
 
-# Set the layer attribute for each node
-V(network)$layer <- rep(1:Layers, each = Nodes)
+# Calculate the Transition Matrix
+TM <- BuildSupraTransitionMatrixFromSupraAdjacencyMatrix(SA, Layers, Nodes)
 
-# Set the layout algorithm
-layout <- layout_with_fr(network)
+# Calculate the inter-assortativity tensor
+IAS <- GetInterAssortativityTensor(SA, Layers, Nodes, isDirected = TRUE, Type = "OO")
 
-# Plot the network with customized options
-plot(
-  network,
-  layout = layout,
-  vertex.size = 10,
-  vertex.label = NA,
-  edge.width = 0.8,
-  edge.arrow.size = 0.5,
-  edge.curved = 0.2,
-  edge.color = "gray",
-  vertex.color = c("skyblue", "lightgreen"),
-  vertex.frame.color = "white",
-  vertex.label.color = "black",
-  main = "Multilayer Network Plot"
-)
+CN <- GetMultiAuthCentrality(SA, Layers, Nodes)
+MC <- GetMultiClosenessCentrality(SA, Layers, Nodes)
+MD <- GetMultiDegreeSum(SA, Layers, Nodes, isDirected = TRUE)
+MEV <- GetMultiEigenvectorCentrality(SA, Layers, Nodes)
+MH <- GetMultiHubCentrality(SA, Layers, Nodes)
+MKZ <- GetMultiKatzCentrality(SA, Layers, Nodes)
+MC <- GetMultiKCoreCentrality(SA, Layers, Nodes)
+MPR <- GetMultiPageRankCentrality(SA, Layers, Nodes)
+MRW <- GetMultiRWCentrality(SA, Layers, Nodes, Type = "classical", Method = "multilayer")
+
+print(TM)
+head(TM)
+# Call the modified GetCoverageEvolutionMultilayer function
+CEM <- GetCoverageEvolutionMultilayer(TM, Layers, Nodes, TimeSequence, Approximate = FALSE, Approximate.disconnected = 222)
+
+print(CEM)
+
+
+#Ploting 
+
+#Assortativity
+LL.cor3 <- IAS$InterPearson
+LL.cor3.df <- melt(as.matrix(LL.cor3))
+LL.cor3.df$type <- "Deg-deg Pearson"
+
+LL.cor4 <- IAS$InterSpearman
+LL.cor4.df <- melt(as.matrix(LL.cor4))
+LL.cor4.df$type <- "Deg-deg Spearman"
+
+LL.cor.df <- rbind(LL.cor3.df, LL.cor4.df)
+
+p <- ggplot(LL.cor.df, aes(Var1, Var2, fill=value, group=type)) + theme_bw() +
+  theme(panel.grid=element_blank()) + xlab("") + ylab("") +
+  scale_fill_gradientn(colors=brewer.pal(9, "YlOrRd")) +
+  geom_tile() + 
+  facet_wrap(.~type, ncol=2)
+
+print(p)
+
+
+
+
+
+
