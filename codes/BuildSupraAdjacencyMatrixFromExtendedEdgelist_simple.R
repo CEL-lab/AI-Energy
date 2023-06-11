@@ -4,7 +4,41 @@ library(igraph)
 library(reshape2)
 library(ggplot2)
 library(RColorBrewer)
-library(MASS)  # Load the MASS package for ginv()
+
+## Python py3plex
+library(reticulate)
+use_python("D:/NDSU/PhD Work/Research/IME Research/AI-Energy/Python/python.exe")
+py3plex <- import("py3plex")
+argparse <- import("argparse")
+Counter <- import("collections", "Counter")
+colors_default <- import("py3plex.visualization.colors", "colors_default")
+community_wrapper <- import("py3plex.algorithms.community_detection.community_wrapper", "cw")
+draw_multiedges <- import("py3plex.visualization.multilayer", "draw_multiedges")
+draw_multilayer_default <- import("py3plex.visualization.multilayer", "draw_multilayer_default")
+hairball_plot <- import("py3plex.visualization.multilayer", "hairball_plot")
+plt <- import("py3plex.visualization.multilayer", "plt")
+multinet <- import("py3plex.core", "multinet")
+
+# Visualization from a simple file
+multilayer_network <- multinet$multi_layer_network()$load_network(
+  "D:/NDSU/PhD Work/Research/IME Research/edgelist.txt",
+  directed = FALSE,
+  input_type = "multiedgelist"
+)
+multilayer_network$basic_stats()
+multilayer_network$visualize_network()
+plt$show()
+
+# Visualization from a simple file (second instance)
+multilayer_network <- multinet$multi_layer_network()$load_network(
+  "D:/NDSU/PhD Work/Research/IME Research/edgelist.txt",
+  directed = FALSE,
+  input_type = "multiedgelist"
+)
+multilayer_network$basic_stats()
+multilayer_network$visualize_network()
+plt$show()
+
 
 mEdges <- read.xlsx("D:/NDSU/PhD Work/Research/IME Research/extended file.xlsx")
 
