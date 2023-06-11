@@ -31,8 +31,8 @@ TM <- BuildSupraTransitionMatrixFromSupraAdjacencyMatrix(SA, Layers, Nodes)
 
 # Calculate the inter-assortativity tensor
 IAS <- GetInterAssortativityTensor(SA, Layers, Nodes, isDirected = TRUE, Type = "OO")
-
 CN <- GetMultiAuthCentrality(SA, Layers, Nodes)
+TM<-BuildSupraTransitionMatrixFromSupraAdjacencyMatrix(SA,Layers,Nodes,Type = "pagerank")
 MC <- GetMultiClosenessCentrality(SA, Layers, Nodes)
 MD <- GetMultiDegreeSum(SA, Layers, Nodes, isDirected = TRUE)
 MEV <- GetMultiEigenvectorCentrality(SA, Layers, Nodes)
@@ -42,8 +42,8 @@ MC <- GetMultiKCoreCentrality(SA, Layers, Nodes)
 MPR <- GetMultiPageRankCentrality(SA, Layers, Nodes)
 MRW <- GetMultiRWCentrality(SA, Layers, Nodes, Type = "classical", Method = "multilayer")
 
-print(TM)
-head(TM)
+#print(TM)
+#head(TM)
 # Call the modified GetCoverageEvolutionMultilayer function
 CEM <- GetCoverageEvolutionMultilayer(TM, Layers, Nodes, TimeSequence, Approximate = FALSE, Approximate.disconnected = 222)
 
