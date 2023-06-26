@@ -5,7 +5,7 @@ library(readxl)
 
 # Read and process the first excel file
 
-mEdges1 <- read.xlsx("/Volumes/Data/NDSU/PhD Work/Research/IME Research/AI-Energy/1.edgelist_default.xlsx")
+mEdges1 <- read.xlsx("1.edgelist_default.xlsx")
 Layers1 <- 2
 Nodes1 <- max(max(mEdges1$From_Node), max(mEdges1$To_Node))
 
@@ -21,7 +21,7 @@ AG1 <- GetAggregateNetworkFromSupraAdjacencyMatrix(SA1, Layers1, Nodes1)
 dim(AG1)
 
 
-mEdges2 <- read.xlsx("/Volumes/Data/NDSU/PhD Work/Research/IME Research/AI-Energy/2.HORTA Electric Demand OFF.xlsx")
+mEdges2 <- read.xlsx("2.HORTA Electric Demand OFF.xlsx")
 Layers <- 2
 Nodes2 <- max(max(mEdges2$From_Node), max(mEdges2$To_Node))
 
@@ -33,9 +33,9 @@ SA2 <- BuildSupraAdjacencyMatrixFromExtendedEdgelist(
   isDirected = TRUE
 )
 #NT2 <- SupraAdjacencyToNodesTensor(SA2, Layers, Nodes2)
-AG2<- GetAggregateNetworkFromSupraAdjacencyMatrix( SA2, Layers, Nodes )
+AG2<- GetAggregateNetworkFromSupraAdjacencyMatrix( SA2, Layers, Nodes2 )
 
-mEdges3<- read.xlsx("/Volumes/Data/NDSU/PhD Work/Research/IME Research/AI-Energy/3.NO166,No167 Gas Valve OFF.xlsx")
+mEdges3<- read.xlsx("3.NO166,No167 Gas Valve OFF.xlsx")
 Layers <- 2
 Nodes3 <- max(max(mEdges3$From_Node), max(mEdges3$To_Node))
 
@@ -47,10 +47,10 @@ SA3 <- BuildSupraAdjacencyMatrixFromExtendedEdgelist(
   isDirected = TRUE
 )
 
-AG3<- GetAggregateNetworkFromSupraAdjacencyMatrix( SA3, Layers, Nodes )
+AG3<- GetAggregateNetworkFromSupraAdjacencyMatrix( SA3, Layers, Nodes3 )
 #NT3 <- SupraAdjacencyToNodesTensor(SA3, Layers, Nodes3)
 
-mEdges4<- read.xlsx("/Volumes/Data/NDSU/PhD Work/Research/IME Research/AI-Energy/4.HORTA, NO166NO167 OFF.xlsx")
+mEdges4<- read.xlsx("4.HORTA, NO166NO167 OFF.xlsx")
 Layers <- 2
 Nodes4 <- max(max(mEdges4$From_Node), max(mEdges4$To_Node))
 
@@ -62,10 +62,10 @@ SA4 <- BuildSupraAdjacencyMatrixFromExtendedEdgelist(
   isDirected = TRUE
 )
 
-AG4<- GetAggregateNetworkFromSupraAdjacencyMatrix( SA4, Layers, Nodes )
+AG4<- GetAggregateNetworkFromSupraAdjacencyMatrix( SA4, Layers, Nodes4 )
 #NT4 <- SupraAdjacencyToNodesTensor(SA4, Layers, Nodes4)
 
-mEdges5<- read.xlsx("/Volumes/Data/NDSU/PhD Work/Research/IME Research/AI-Energy/5.CHAMPION, NO45NO52 OFF.xlsx")
+mEdges5<- read.xlsx("5.CHAMPION, NO45NO52 OFF.xlsx")
 Layers <- 2
 Nodes5 <- max(max(mEdges5$From_Node), max(mEdges5$To_Node))
 
@@ -77,15 +77,15 @@ SA5 <- BuildSupraAdjacencyMatrixFromExtendedEdgelist(
   isDirected = TRUE
 )
 
-AG5<- GetAggregateNetworkFromSupraAdjacencyMatrix( SA5, Layers, Nodes )
+AG5<- GetAggregateNetworkFromSupraAdjacencyMatrix( SA5, Layers, Nodes5 )
 #NT5 <- SupraAdjacencyToNodesTensor(SA5, Layers, Nodes5)
 
 
 # Build the node tensor
-node_tensor <- lapply(list(AG1, AG2, AG3, AG4, AG5), as_adjacency_matrix)
+node_tensor <- lapply(list(AG1, AG2, AG3, AG4, AG5), as_adjacency_matrix, attr = 'weight')
 node_tensor
 # Build the layer tensor
 layer_tensor <- diagR(c(1, 1), 5, 1) + diagR(c(1, 1), 5, -1)
 layer_tensor
 # Build the supra-adjacency matrix
-M <- BuildSupraAdjacencyMatrixFromEdgeColoredMatrices(node_tensor, layer_tensor, 5, Nodes)
+M <- BuildSupraAdjacencyMatrixFromEdgeColoredMatrices(node_tensor, layer_tensor, 5, Nodes1)
