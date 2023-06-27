@@ -7,10 +7,10 @@ library(ggplot2)
 library(ggraph)
 library(multinet)
 
-setwd("/Users/harunpirim/Downloads/AI-Energy-main/data")
+#setwd("/Users/harunpirim/Downloads/AI-Energy-main/data")
 # Read and process the first excel file
 
-mEdges1 <- read.xlsx("1.edgelist_default.xlsx")
+mEdges1 <- read.xlsx("/Volumes/Data/NDSU/PhD Work/Research/IME Research/AI-Energy/1.edgelist_default.xlsx")
 Layers1 <- 2
 Nodes1 <- max(max(mEdges1$From_Node), max(mEdges1$To_Node))
 
@@ -26,7 +26,7 @@ AG1 <- GetAggregateNetworkFromSupraAdjacencyMatrix(SA1, Layers1, Nodes1)
 dim(AG1)
 
 
-mEdges2 <- read.xlsx("2.HORTA Electric Demand OFF.xlsx")
+mEdges2 <- read.xlsx("/Volumes/Data/NDSU/PhD Work/Research/IME Research/AI-Energy/2.HORTA Electric Demand OFF.xlsx")
 Layers <- 2
 Nodes2 <- max(max(mEdges2$From_Node), max(mEdges2$To_Node))
 
@@ -40,7 +40,7 @@ SA2 <- BuildSupraAdjacencyMatrixFromExtendedEdgelist(
 #NT2 <- SupraAdjacencyToNodesTensor(SA2, Layers, Nodes2)
 AG2<- GetAggregateNetworkFromSupraAdjacencyMatrix( SA2, Layers, Nodes2 )
 
-mEdges3<- read.xlsx("3.NO166,No167 Gas Valve OFF.xlsx")
+mEdges3<- read.xlsx("/Volumes/Data/NDSU/PhD Work/Research/IME Research/AI-Energy/3.NO166,No167 Gas Valve OFF.xlsx")
 Layers <- 2
 Nodes3 <- max(max(mEdges3$From_Node), max(mEdges3$To_Node))
 
@@ -55,7 +55,7 @@ SA3 <- BuildSupraAdjacencyMatrixFromExtendedEdgelist(
 AG3<- GetAggregateNetworkFromSupraAdjacencyMatrix( SA3, Layers, Nodes3 )
 #NT3 <- SupraAdjacencyToNodesTensor(SA3, Layers, Nodes3)
 
-mEdges4<- read.xlsx("4.HORTA, NO166NO167 OFF.xlsx")
+mEdges4<- read.xlsx("/Volumes/Data/NDSU/PhD Work/Research/IME Research/AI-Energy/4.HORTA, NO166NO167 OFF.xlsx")
 Layers <- 2
 Nodes4 <- max(max(mEdges4$From_Node), max(mEdges4$To_Node))
 
@@ -70,19 +70,21 @@ SA4 <- BuildSupraAdjacencyMatrixFromExtendedEdgelist(
 AG4<- GetAggregateNetworkFromSupraAdjacencyMatrix( SA4, Layers, Nodes4 )
 #NT4 <- SupraAdjacencyToNodesTensor(SA4, Layers, Nodes4)
 
-mEdges5<- read.xlsx("5.CHAMPION, NO45NO52 OFF.xlsx")
-Layers <- 2
+mEdges5<- read.xlsx("/Volumes/Data/NDSU/PhD Work/Research/IME Research/AI-Energy/5.CHAMPION, NO45NO52 OFF.xlsx")
+Layers5 <- 2
 Nodes5 <- max(max(mEdges5$From_Node), max(mEdges5$To_Node))
+class(Nodes5)
+class(mEdges5[, 2])
 
 # Build the supra-adjacency matrix
 SA5 <- BuildSupraAdjacencyMatrixFromExtendedEdgelist(
   mEdges = mEdges5,
-  Layers = Layers,
+  Layers = Layers5,
   Nodes = Nodes5,
   isDirected = TRUE
 )
 
-AG5<- GetAggregateNetworkFromSupraAdjacencyMatrix( SA5, Layers, Nodes5 )
+AG5<- GetAggregateNetworkFromSupraAdjacencyMatrix( SA5, Layers5, Nodes5 )
 #NT5 <- SupraAdjacencyToNodesTensor(SA5, Layers, Nodes5)
 
 Layers <- 5
@@ -128,11 +130,12 @@ png("mux_AN_5layers.png", width=1024, height=1024*0.5, res=120)
 multiplot(p[[1]], p[[2]], p[[3]],p[[4]],p[[5]], cols=5)
 dev.off()
 
+#Multinet Code: UPDATED
 
-#multinet object code 
-for(i in 1:5){
-  assign(paste0("layer",i), get(paste0('AG',i)))
-  V(get(paste0("layer",i)))$name <- V(get(paste0('layer',i)))
+for (i in 1:5) {
+  layer <- get(paste0("AG", i))
+  V(layer)$name <- V(layer)
+  assign(paste0("layer", i), layer)
 }
 
 mgraph <- ml_empty()
@@ -143,4 +146,11 @@ for (k in 1:5) {
 }
 mgraph
 summary(mgraph) 
+
+#Multinet Analysis: 
+
+layer_comparison_ml(mgraph, method ="jeffrey.degree")
+layer_comparison_ml(mgraph, method = "pearson.degree")
+layer_comparison_ml(mgraph, method = "jaccard.edges")
+
 
