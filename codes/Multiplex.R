@@ -2,7 +2,12 @@ library(muxViz)
 library(openxlsx)
 library(igraph)
 library(readxl)
+library(RColorBrewer)
+library(ggplot2)
+library(ggraph)
+library(multinet)
 
+setwd("/Users/harunpirim/Downloads/AI-Energy-main/data")
 # Read and process the first excel file
 
 mEdges1 <- read.xlsx("1.edgelist_default.xlsx")
@@ -80,7 +85,8 @@ SA5 <- BuildSupraAdjacencyMatrixFromExtendedEdgelist(
 AG5<- GetAggregateNetworkFromSupraAdjacencyMatrix( SA5, Layers, Nodes5 )
 #NT5 <- SupraAdjacencyToNodesTensor(SA5, Layers, Nodes5)
 
-
+Layers <- 5
+Nodes <- Nodes1
 # Build the node tensor
 node_tensor <- lapply(list(AG1, AG2, AG3, AG4, AG5), as_adjacency_matrix, attr = 'weight')
 node_tensor
@@ -89,3 +95,52 @@ layer_tensor <- diagR(c(1, 1), 5, 1) + diagR(c(1, 1), 5, -1)
 layer_tensor
 # Build the supra-adjacency matrix
 M <- BuildSupraAdjacencyMatrixFromEdgeColoredMatrices(node_tensor, layer_tensor, 5, Nodes1)
+g.list <- list(AG1,AG2,AG3,AG4,AG5)
+
+#Calculate PageRank and Degree versatility
+pr <- GetMultiPageRankCentrality(M, Layers,Nodes)
+deg <- GetMultiDegree(M, Layers,Nodes, isDirected=T)
+
+mypal <- brewer.pal(Layers, "Set1")
+
+#Generate the coordinates for layouting our networks.
+lay <- layout_with_fr(graph_from_adjacency_matrix( GetAggregateMatrix(node_tensor, Layers, Nodes) ))
+
+p <- list()
+
+for(l in 1:length(node_tensor)){
+  layout <- create_layout(g.list[[l]], layout = 'drl')
+  layout$x <- lay[,1]
+  layout$y <- lay[,2]
+  
+  V(g.list[[l]])$pr <- pr
+  V(g.list[[l]])$deg <- deg
+  
+  p[[l]] <- ggraph(layout) + theme_void() +
+    geom_edge_link(colour=mypal[l], show.legend = FALSE) + 
+    geom_node_point(aes(size = pr, alpha=pr), color=mypal[l]) + 
+    theme(legend.position="bottom", plot.title=element_text(size=16, hjust=0.5, face="bold", colour=mypal[l], vjust=-1)) + 
+    ggtitle(paste("Layer", l)) +
+    guides(size=guide_legend(title="MuxPR"), alpha='none')
+}
+
+png("mux_AN_5layers.png", width=1024, height=1024*0.5, res=120)
+multiplot(p[[1]], p[[2]], p[[3]],p[[4]],p[[5]], cols=5)
+dev.off()
+
+
+#multinet object code 
+for(i in 1:5){
+  assign(paste0("layer",i), get(paste0('AG',i)))
+  V(get(paste0("layer",i)))$name <- V(get(paste0('layer',i)))
+}
+
+mgraph <- ml_empty()
+for (k in 1:5) {
+  if(all(as.matrix(!get.adjacency(get(paste0('layer',k)))))==0){
+    add_igraph_layer_ml(mgraph,get(paste0('layer',k)), paste0("layer",k))
+  }
+}
+mgraph
+summary(mgraph) 
+
