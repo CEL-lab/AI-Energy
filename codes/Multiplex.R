@@ -153,4 +153,133 @@ layer_comparison_ml(mgraph, method ="jeffrey.degree")
 layer_comparison_ml(mgraph, method = "pearson.degree")
 layer_comparison_ml(mgraph, method = "jaccard.edges")
 
+#Community detection algorithms and evaluation functions
+
+# Detect communities using Abacus algorithm
+communities_AB <- abacus_ml(mgraph, min.actors = 3, min.layers = 1)
+
+# Calculate modularity using modularity_ml function
+modularity_AB <- modularity_ml(mgraph, communities_AB, gamma = 1, omega = 1)
+
+# Print the detected communities & Modularity
+print(communities_AB)
+print(modularity_AB)
+
+# Transform Abacus communities into a list format
+community_list_AB <- get_community_list_ml(communities_AB, mgraph)
+
+# Print the Abacus community list
+print(community_list_AB)
+
+
+# Detect communities using Flat EC algorithm & Modularity
+communities_EC <- flat_ec_ml(mgraph)
+
+# Calculate modularity using modularity_ml function
+modularity_EC <- modularity_ml(mgraph, communities_EC, gamma = 1, omega = 1)
+
+# Print the detected communities & Modularity using Flat EC algorithm 
+print(communities_EC)
+print(modularity_EC)
+
+# Calculate NMI between communities using Abacus algorithm & Flat EC algorithm using nmi_ml function
+nmi_value1_2 <- nmi_ml(mgraph, communities_AB, communities_EC)
+print(nmi_value1_2)
+
+# Calculate Omega Index between using Abacus algorithm & Flat EC algorithm using omega_index_ml function
+omega_index1_2 <- omega_index_ml(mgraph, communities_AB, communities_EC)
+
+# Print the Omega Index value
+print(omega_index1_2)
+
+# Transform Flat EC communities into a list format
+community_list_EC <- get_community_list_ml(communities_EC, mgraph)
+
+# Print the Flat EC community list
+print(community_list_EC)
+
+# Detect communities using Flat Newman-Watts algorithm
+communities_NW <- flat_nw_ml(mgraph)
+
+# Calculate modularity using modularity_ml function
+modularity_NW <- modularity_ml(mgraph, communities_NW, gamma = 1, omega = 1)
+
+# Print the detected communities & Modularity using Flat Newman-Watts algorithm 
+print(communities_NW)
+print(modularity_NW)
+
+# Transform Flat Newman-Watts communities into a list format
+community_list_NW <- get_community_list_ml(communities_NW, mgraph)
+
+# Print the Flat Newman-Watts community list
+print(community_list_NW)
+
+# Detect communities using Clique Percolation Method (CPM) algorithm
+communities_CPM <- clique_percolation_ml(mgraph, k = 3, m = 1)
+
+# Calculate modularity using modularity_ml function
+modularity_CPM <- modularity_ml(mgraph, communities_CPM, gamma = 1, omega = 1)
+
+# Print the detected communities & Modularity using Clique Percolation Method (CPM) algorithm 
+print(communities_CPM)
+print(modularity_CPM)
+
+# Transform CPM communities into a list format
+community_list_CPM <- get_community_list_ml(communities_CPM, mgraph)
+
+# Print the CPM community list
+print(community_list_CPM)
+
+# Calculate NMI between communities using Flat Newman-Watts & Clique Percolation Method (CPM) algorithm using nmi_ml function
+nmi_value3_4 <- nmi_ml(mgraph, communities_NW, communities_CPM)
+print(nmi_value3_4)
+
+# Calculate Omega Index between using Flat Newman-Watts & Clique Percolation Method (CPM) using omega_index_ml function
+omega_index3_4 <- omega_index_ml(mgraph, communities_NW, communities_CPM)
+
+# Print the Omega Index value
+print(omega_index3_4)
+
+# Detect communities using Generalized Louvain algorithm
+communities_GLA <- glouvain_ml(mgraph, gamma = 1, omega = 1)
+
+# Calculate modularity using modularity_ml function
+modularity_GLA <- modularity_ml(mgraph, communities_GLA, gamma = 1, omega = 1)
+
+# Print the detected communities & Modularity using Generalized Louvain algorithm 
+print(communities_GLA)
+print(modularity_GLA)
+
+# Transform Generalized Louvain communities into a list format
+community_list_GLA <- get_community_list_ml(communities_GLA, mgraph)
+
+# Print the Generalized Louvain community list
+print(community_list_GLA)
+
+# Detect communities using Infomap algorithm
+communities_IMA <- infomap_ml(mgraph, overlapping = FALSE, directed = TRUE, self.links = FALSE)
+
+# Calculate modularity using modularity_ml function
+modularity_IMA <- modularity_ml(mgraph, communities_IMA, gamma = 1, omega = 1)
+
+# Print the detected communities & Modularity using Infomap algorithm algorithm 
+print(communities_IMA)
+print(modularity_IMA)
+
+# Transform Infomap communities into a list format
+community_list_IMA <- get_community_list_ml(communities_IMA, mgraph)
+
+# Print the Infomap community list
+print(community_list_IMA)
+
+# Calculate NMI between communities using Generalized Louvain & Infomap algorithm algorithm using nmi_ml function
+nmi_value5_6 <- nmi_ml(mgraph, communities_GLA, communities_IMA)
+print(nmi_value5_6)
+
+# Calculate Omega Index between using Generalized Louvain & Infomap algorithm using omega_index_ml function
+omega_index5_6 <- omega_index_ml(mgraph, communities_GLA, communities_IMA)
+
+# Print the Omega Index value
+print(omega_index5_6)
+
 
