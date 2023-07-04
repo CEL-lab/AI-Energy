@@ -169,7 +169,7 @@ layer_comparison_ml(mgraph, method = "jaccard.edges")
 communities_AB <- abacus_ml(mgraph, min.actors = 3, min.layers = 1)
 
 # Calculate modularity using modularity_ml function
-#modularity_AB <- modularity_ml(mgraph, communities_AB, gamma = 1, omega = 1)
+modularity_AB <- modularity_ml(mgraph, communities_AB, gamma = 1, omega = 1)
 
 # Print the detected communities & Modularity
 print(communities_AB)
@@ -186,7 +186,7 @@ print(community_list_AB)
 communities_EC <- flat_ec_ml(mgraph)
 
 # Calculate modularity using modularity_ml function
-#modularity_EC <- modularity_ml(mgraph, communities_EC, gamma = 1, omega = 1)
+modularity_EC <- modularity_ml(mgraph, communities_EC, gamma = 1, omega = 1)
 
 # Print the detected communities & Modularity using Flat EC algorithm 
 print(communities_EC)
@@ -212,7 +212,7 @@ print(community_list_EC)
 communities_NW <- flat_nw_ml(mgraph)
 
 # Calculate modularity using modularity_ml function
-#modularity_NW <- modularity_ml(mgraph, communities_NW, gamma = 1, omega = 1)
+modularity_NW <- modularity_ml(mgraph, communities_NW, gamma = 1, omega = 1)
 
 # Print the detected communities & Modularity using Flat Newman-Watts algorithm 
 print(communities_NW)
@@ -228,7 +228,7 @@ print(community_list_NW)
 communities_CPM <- clique_percolation_ml(mgraph, k = 3, m = 1)
 
 # Calculate modularity using modularity_ml function
-#modularity_CPM <- modularity_ml(mgraph, communities_CPM, gamma = 1, omega = 1)
+modularity_CPM <- modularity_ml(mgraph, communities_CPM, gamma = 1, omega = 1)
 
 # Print the detected communities & Modularity using Clique Percolation Method (CPM) algorithm 
 print(communities_CPM)
@@ -254,7 +254,7 @@ print(community_list_CPM)
 communities_GLA <- glouvain_ml(mgraph, gamma = 1, omega = 1)
 
 # Calculate modularity using modularity_ml function
-#modularity_GLA <- modularity_ml(mgraph, communities_GLA, gamma = 1, omega = 1)
+modularity_GLA <- modularity_ml(mgraph, communities_GLA, gamma = 1, omega = 1)
 
 # Print the detected communities & Modularity using Generalized Louvain algorithm 
 print(communities_GLA)
@@ -293,6 +293,16 @@ print(community_list_GLA)
 
 # Print the Omega Index value
 #print(omega_index5_6)
+
+# Detect communities using Minimum Description Length Principle (MDLP) algorithm
+communities_MDLP <- mdlp_ml(mgraph)
+
+# Calculate modularity using modularity_ml function
+modularity_MDLP <- modularity_ml(mgraph, communities_MDLP, gamma = 1, omega = 1)
+
+# Print the detected communities & Modularity using Minimum Description Length Principle (MDLP) algorithm 
+print(communities_MDLP)
+
 
 #Drawing a multilayer network
 plot(mgraph, layout = NULL, grid = NULL, mai = c(.1, .1, .1, .1),
