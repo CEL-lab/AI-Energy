@@ -1,3 +1,4 @@
+library(multinet)
 library(muxViz)
 library(openxlsx)
 library(igraph)
@@ -5,7 +6,6 @@ library(readxl)
 library(RColorBrewer)
 library(ggplot2)
 library(ggraph)
-library(multinet)
 library(knitr)
 install.packages("NMI")
 library(NMI)
@@ -149,6 +149,7 @@ for (k in 1:5) {
 }
 
 mgraph
+str(mgraph)
 summary(mgraph) 
 
 # Check class of mgraph
@@ -156,9 +157,9 @@ class(mgraph)
 
 # Check if mgraph is an igraph object
 is.igraph(mgraph)
+str(mgraph)
 
 #Multinet Analysis: 
-
 layer_comparison_ml(mgraph, method ="jeffrey.degree")
 layer_comparison_ml(mgraph, method = "pearson.degree")
 layer_comparison_ml(mgraph, method = "jaccard.edges")
@@ -169,11 +170,11 @@ layer_comparison_ml(mgraph, method = "jaccard.edges")
 communities_AB <- abacus_ml(mgraph, min.actors = 3, min.layers = 1)
 
 # Calculate modularity using modularity_ml function
-modularity_AB <- modularity_ml(mgraph, communities_AB, gamma = 1, omega = 1)
+modularity_AB <- modularity_ml(mgraph, communities_AB, gamma = 1, omega = 5)
 
 # Print the detected communities & Modularity
 print(communities_AB)
-#print(modularity_AB)
+print(modularity_AB)
 
 # Transform Abacus communities into a list format
 community_list_AB <- get_community_list_ml(communities_AB, mgraph)
@@ -181,6 +182,81 @@ community_list_AB <- get_community_list_ml(communities_AB, mgraph)
 # Print the Abacus community list
 print(community_list_AB)
 
+print(communities_AB)
+community_sizes <- table(communities_AB$cid)
+print(community_sizes)
+
+column_names <- colnames(communities_AB)
+column_names
+##################################
+#Plot the graph
+multinet::plot(mgraph, vertex.color = communities_AB$cid)
+multinet::plot(mgraph, vertex.color = communities_EC$cid)
+
+# Customize the legend
+legend("topleft", legend = unique(communities_AB$cid), col = unique(communities_AB$cid), pch = 21:25)
+
+# Convert the adjacency matrix of mgraph to a regular matrix
+adj_matrix <- as.matrix(mgraph)
+
+# Create an empty igraph object
+igraph_obj <- graph.empty(n = nrow(adj_matrix), directed = is_directed(mgraph))
+
+# Add the edges to the igraph object
+add.edges(igraph_obj, which(adj_matrix > 0))
+
+# Assign community labels to the igraph object
+V(igraph_obj)$community <- communities_AB$cid
+
+# Plot the graph with community colors
+plot(igraph_obj, vertex.color = communities_AB$cid, vertex.label = NA)
+
+############################## Ploting Testing #################################################
+
+# Convert cid to factor and assign custom labels based on node ID
+#community_assignment <- factor(ifelse(communities_AB$actor <= 75, "E", "G"))
+
+# Plot the graph with custom labels
+# Convert cid to factor and assign custom labels based on node ID
+community_assignment <- factor(ifelse(communities_AB$actor <= 75, "E", "A"))
+
+# Create a color palette for the communities
+color_palette <- rainbow(length(unique(communities_AB$cid)))
+
+# Assign colors to the communities
+node_colors <- color_palette[as.numeric(communities_AB$cid)]
+
+# Plot the graph with custom labels and colors
+plot(mgraph, layout = NULL, grid = NULL, mai = c(.1, .1, .1, .1),
+     layers = NULL, vertex.shape = 21, vertex.cex = 1, vertex.size = vertex.cex,
+     vertex.color = node_colors, vertex.label = community_assignment,
+     vertex.labels.pos = 3, vertex.labels.offset = .5, vertex.labels.cex = 0.5,  # Adjust the size here
+     vertex.labels.col = 1, edge.type = 1, edge.width = 1, edge.col = 1,
+     edge.alpha = .5, edge.arrow.length = 0.1, edge.arrow.angle = 20,
+     legend.x = NULL, legend.y = NULL, legend.pch = 20, legend.cex = 0.5,
+     legend.inset = c(0, 0), show.layer.names = TRUE, layer.names.cex = 1)
+
+################ Plot Test 2 ####################
+# Convert mgraph to igraph object
+igraph_obj <- as.igraph(mgraph)
+
+# Assign community labels to the nodes
+community_labels <- rep(NA, vcount(igraph_obj))
+community_labels[1:75] <- "E"
+community_labels[76:vcount(igraph_obj)] <- "G"
+
+# Set layout parameters
+layout_params <- layout_with_fr(igraph_obj, niter = 1000)  # Increase the number of iterations if needed
+
+# Plot the graph with custom labels and colors
+plot(igraph_obj, layout = layout_params, 
+     vertex.shape = "circle", vertex.label.cex = 0.7,
+     vertex.color = communities_AB$cid,
+     edge.width = 1, edge.color = "black",
+     edge.arrow.size = 0.5,
+     main = "Network Plot")
+
+####################################################################################################
 
 # Detect communities using Flat EC algorithm & Modularity
 communities_EC <- flat_ec_ml(mgraph)
@@ -304,21 +380,20 @@ modularity_MDLP <- modularity_ml(mgraph, communities_MDLP, gamma = 1, omega = 1)
 print(communities_MDLP)
 
 
-#Drawing a multilayer network
-plot(mgraph, layout = NULL, grid = NULL, mai = c(.1, .1, .1, .1),
-     layers = NULL,
-     vertex.shape = 21, vertex.cex = 1, vertex.size = vertex.cex, vertex.color = 1,
-     vertex.labels = NULL, vertex.labels.pos = 3,
-     vertex.labels.offset = .5, vertex.labels.cex = 1, vertex.labels.col = 1,
-     edge.type = 1, edge.width = 1, edge.col = 1, edge.alpha = .5,
-     edge.arrow.length = 0.1, edge.arrow.angle = 20,
-     legend.x = NULL, legend.y = NULL,
-     legend.pch = 20, legend.cex = 0.5,
-     legend.inset = c(0, 0),
-     com = NULL, com.cex = 1,
-     show.layer.names = TRUE, layer.names.cex = 1)
 
 
+plot(mgraph, vertex.color = communities_AB$cid)
+
+# Customize the legend
+legend("topleft", legend = unique(communities_AB$cid), col = unique(communities_AB$cid), pch = 21:25)
+
+
+# Loop through the nodes and annotate with community information
+for (i in 1:num_communities) {
+  nodes <- communities_AB$actor[communities_AB$cid == community_labels[i]]
+  plot(mgraph, vertex.color = community_colors[i], vertex.shape = community_shapes[i],
+       vertices = nodes, add = TRUE)
+}
 # List of community variables
 community_variables <- list(communities_AB, communities_EC, communities_NW, communities_CPM, communities_GLA)
 algorithm_names <- c("AB", "EC", "NW", "CPM", "GLA")
