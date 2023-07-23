@@ -2,23 +2,21 @@ library(muxViz)
 library(openxlsx)
 library(igraph)
 library(readxl)
-library(ggplot2)
 library(dplyr)
 library(tidyr)
 library(hrbrthemes)
 library(scales)
 
 # Function to calculate variables for a given file
-calculateVariables <- function(file) {
+calculateVariables <- function(edge_list) {
   # Read the sheet
-  mEdges <- read.xlsx(file)
-  
+  #mEdges <- read.xlsx(file)
   Layers <- 2
-  Nodes <- max(max(mEdges$From_Node), max(mEdges$To_Node))
+  Nodes <- max(max(edge_list$From_Node), max(edge_list$To_Node))
   
   # Build the supra-adjacency matrix
   SA <- BuildSupraAdjacencyMatrixFromExtendedEdgelist(
-    mEdges = mEdges,
+    mEdges = edge_list,
     Layers = Layers,
     Nodes = Nodes,
     isDirected = TRUE
@@ -51,19 +49,26 @@ calculateVariables <- function(file) {
 }
 
 # Read the Excel files
-file1 <- "/Volumes/Data/NDSU/PhD Work/Research/IME Research/AI-Energy/1.edgelist_default.xlsx"
-file2 <- "/Volumes/Data/NDSU/PhD Work/Research/IME Research/AI-Energy/2.HORTA Electric Demand OFF.xlsx"
-file3 <- "/Volumes/Data/NDSU/PhD Work/Research/IME Research/AI-Energy/3.NO166,No167 Gas Valve OFF.xlsx"
-file4 <- "/Volumes/Data/NDSU/PhD Work/Research/IME Research/AI-Energy/4.HORTA, NO166NO167 OFF.xlsx"
-file5 <- "/Volumes/Data/NDSU/PhD Work/Research/IME Research/AI-Energy/5.CHAMPION, NO45NO52 OFF.xlsx"
+file1 <- read.xlsx("/Volumes/Data/NDSU/PhD Work/Research/IME Research/AI-Energy/1.edgelist_default.xlsx")
+file2 <- read.xlsx("/Volumes/Data/NDSU/PhD Work/Research/IME Research/AI-Energy/2.HORTA Electric Demand OFF.xlsx")
+file3 <- read.xlsx("/Volumes/Data/NDSU/PhD Work/Research/IME Research/AI-Energy/3.NO166,No167 Gas Valve OFF.xlsx")
+file4 <- read.xlsx("/Volumes/Data/NDSU/PhD Work/Research/IME Research/AI-Energy/4.HORTA, NO166NO167 OFF.xlsx")
+file5 <- read.xlsx("/Volumes/Data/NDSU/PhD Work/Research/IME Research/AI-Energy/5.CHAMPION, NO45NO52 OFF.xlsx")
+
+# Extract the edge lists from the data frames
+edge_list1 <- file1
+edge_list2 <- file2
+edge_list3 <- file3
+edge_list4 <- file4
+edge_list5 <- file5
 
 # Calculate variables for each file
 results <- list(
-  results1 <- calculateVariables(file1),
-  results2 <- calculateVariables(file2),
-  results3 <- calculateVariables(file3),
-  results4 <- calculateVariables(file4),
-  results5 <- calculateVariables(file5)
+  results1 = calculateVariables(file1),
+  results2 = calculateVariables(file2),
+  results3 = calculateVariables(file3),
+  results4 = calculateVariables(file4),
+  results5 = calculateVariables(file5)
 )
 
 # Assign variables using a loop
@@ -81,7 +86,78 @@ for (i in 1:length(results)) {
   assign(paste0("MKC", i), results[[i]]$MKC)
   assign(paste0("MPR", i), results[[i]]$MPR)
   assign(paste0("MRW", i), results[[i]]$MRW)
+  #assign(paste0("CEM", i), results[[i]]$CEM)
 }
+########## Coverage Function #################
+
+mEdges1 <- read.xlsx(file1)
+Layers <- 2
+Nodes1 <- max(max(mEdges1$From_Node), max(mEdges1$To_Node))
+
+SA_UD1 <- BuildSupraAdjacencyMatrixFromExtendedEdgelist(
+  mEdges = mEdges1,
+  Layers = Layers,
+  Nodes = Nodes1,
+  isDirected = FALSE
+)
+
+mEdges2 <- read.xlsx(file2)
+Layers <- 2
+Nodes2 <- max(max(mEdges2$From_Node), max(mEdges2$To_Node))
+
+SA_UD2 <- BuildSupraAdjacencyMatrixFromExtendedEdgelist(
+  mEdges = mEdges2,
+  Layers = Layers,
+  Nodes = Nodes2,
+  isDirected = FALSE
+)
+
+mEdges3 <- read.xlsx(file3)
+Layers <- 2
+Nodes3 <- max(max(mEdges3$From_Node), max(mEdges3$To_Node))
+
+SA_UD3 <- BuildSupraAdjacencyMatrixFromExtendedEdgelist(
+  mEdges = mEdges3,
+  Layers = Layers,
+  Nodes = Nodes3,
+  isDirected = FALSE
+)
+
+mEdges4 <- read.xlsx(file4)
+Layers <- 2
+Nodes4 <- max(max(mEdges4$From_Node), max(mEdges4$To_Node))
+
+SA_UD4 <- BuildSupraAdjacencyMatrixFromExtendedEdgelist(
+  mEdges = mEdges4,
+  Layers = Layers,
+  Nodes = Nodes4,
+  isDirected = FALSE
+)
+
+mEdges5 <- read.xlsx(file5)
+Layers <- 2
+Nodes5 <- max(max(mEdges5$From_Node), max(mEdges5$To_Node))
+
+SA_UD5 <- BuildSupraAdjacencyMatrixFromExtendedEdgelist(
+  mEdges = mEdges5,
+  Layers = Layers,
+  Nodes = Nodes5,
+  isDirected = FALSE
+)
+
+TM_UD1 <- BuildSupraTransitionMatrixFromSupraAdjacencyMatrix(SA_UD1, Layers, Nodes1)
+TM_UD2 <- BuildSupraTransitionMatrixFromSupraAdjacencyMatrix(SA_UD2, Layers, Nodes2)
+TM_UD3 <- BuildSupraTransitionMatrixFromSupraAdjacencyMatrix(SA_UD3, Layers, Nodes3)
+TM_UD4 <- BuildSupraTransitionMatrixFromSupraAdjacencyMatrix(SA_UD4, Layers, Nodes4)
+TM_UD5 <- BuildSupraTransitionMatrixFromSupraAdjacencyMatrix(SA_UD5, Layers, Nodes5)
+
+CEM1 <- GetCoverageEvolutionMultilayer(TM_UD1, Layers,Nodes1,1:5)
+CEM2 <- GetCoverageEvolutionMultilayer(TM_UD2, Layers,Nodes2,1:5)
+CEM3 <- GetCoverageEvolutionMultilayer(TM_UD3, Layers,Nodes3,1:5)
+CEM4 <- GetCoverageEvolutionMultilayer(TM_UD4, Layers,Nodes4,1:5)
+CEM5 <- GetCoverageEvolutionMultilayer(TM_UD5, Layers,Nodes5,1:5)
+
+##########
 
 ### TESTING TO DISPLAY #########
 # Function to display a matrix for a given file and results
@@ -120,170 +196,12 @@ displayMatrix <- function(file, results, matrix_name) {
 
 
                                     ######################################
-                                    ###### Aggregate Network ##########
+                                    ###### Aggregated Networks ##########
                                     ######################################
 
-library(RColorBrewer)
-
-# Convert AM1 into an adjacency matrix format
-adj_matrix <- as.matrix(AM1)
-
-# Create a graph object from the adjacency matrix
-g <- graph_from_adjacency_matrix(adj_matrix, mode = "directed")
-
-# Get the node indices
-node_indices <- as.numeric(V(g))
-
-# Update vertex labels based on condition
-V(g)$label <- ifelse(node_indices <= 75, "E", "G")
-
-# Set the colors for the vertices based on the labels
-vertex_colors <- ifelse(node_indices <= 75, "red", "orange")
-
-# plot
-par(bg = "grey13", mar = c(0, 0, 0, 0))
-
-# Plot the graph with updated colors and labels
-plot(g, 
-     vertex.size = 12,
-     vertex.color = vertex_colors, 
-     vertex.label.cex = 0.7,
-     vertex.label.color = "black",
-     vertex.frame.color = "transparent",
-     main = "AM1 Network Graph",
-     edge.width = 1,
-     edge.arrow.size = 0.3,
-     edge.arrow.width = 0.5,
-     layout = layout_with_fr(g)
-)
-# Create custom legend
-legend("topright",
-       legend = c("Electricity", "Gas"),
-       col = c("red", "orange"),
-       bty = "n",
-       pch = 20,
-       pt.cex = 3,
-       cex = 0.8,  # Adjust font size
-       text.col = c("red", "orange"),
-       horiz = FALSE,
-       inset = c(0.05, 0.05)  # Adjust the distance from the plot
-)
-#############
-# Define the AM matrices
-AM_matrices <- list(AM1 = AM1, AM2 = AM2, AM3 = AM3, AM4 = AM4, AM5 = AM5)
-
-# Set up the plotting area with multiple panels
-par(mfrow = c(1, 5), mar = c(1, 1, 1, 0), oma = c(0, 3, 0, 0))
-
-# Loop through each AM matrix
-for (i in 1:length(AM_matrices)) {
-  # Get the current AM matrix
-  AM <- as.matrix(AM_matrices[[i]])
-  
-  # Create a graph object from the AM matrix
-  g <- graph_from_adjacency_matrix(AM, mode = "directed")
-  
-  # Update vertex labels based on condition
-  V(g)$label <- ifelse(as.numeric(V(g)) <= 75, "E", "G")
-  
-  # Set the colors for the vertices based on the labels
-  vertex_colors <- ifelse(V(g)$label == "E", "red", "orange")
-  
-  # Plot the graph with Fruchterman-Reingold layout and vertex colors
-  plot(g, 
-       vertex.size = 15,
-       vertex.color = vertex_colors,
-       vertex.label.cex = 0.5,
-       vertex.label.color = "white",
-       vertex.frame.color = "transparent",
-       edge.width = 1,
-       edge.arrow.size = 0.03,
-       edge.arrow.width = 0.5,
-       main = paste("AM", i),
-       #layout = layout_with_fr(g)
-       layout = layout_randomly(g)
-  )
-  
-  # Add the legend
-  legend("topright",
-         legend = c("Electricity", "Gas"),
-         col = c("red", "orange"),
-         bty = "n",
-         pch = 20,
-         pt.cex = 3,
-         cex = 0.8,  # Adjust font size
-         text.col = c("red", "orange"),
-         horiz = FALSE,
-         inset = c(0.05, 0.05)  # Adjust the distance from the plot
-  )
-}
-
-# Reset the plotting area
-par(mfrow = c(1, 1))
-####
-library(gridExtra)
-
-# Define the AM matrices
-AM_matrices <- list(AM1 = AM1, AM2 = AM2, AM3 = AM3, AM4 = AM4, AM5 = AM5)
-
-# Initialize the faceit plots list
-faceit_plots <- list()
-
-# Loop through each AM matrix
-for (i in 1:length(AM_matrices)) {
-  # Get the current AM matrix
-  AM <- as.matrix(AM_matrices[[i]])
-  
-  # Create a graph object from the AM matrix
-  g <- graph_from_adjacency_matrix(AM, mode = "directed")
-  
-  # Update vertex labels based on condition
-  V(g)$label <- ifelse(as.numeric(V(g)) <= 75, "E", "G")
-  
-  # Set the colors for the vertices based on the labels
-  vertex_colors <- ifelse(V(g)$label == "E", "red", "orange")
-  
-  # Plot the graph with Fruchterman-Reingold layout and vertex colors
-  plot <- plot(g, 
-               vertex.size = 15,
-               vertex.color = vertex_colors,
-               vertex.label.cex = 0.5,
-               vertex.label.color = "white",
-               vertex.frame.color = "transparent",
-               edge.width = 1,
-               edge.arrow.size = 0.03,
-               edge.arrow.width = 0.5,
-               main = paste("AM", i),
-               layout = layout_randomly(g)
-  )
-  
-  # Add the plot to the list
-  faceit_plots[[i]] <- plot
-}
-
-# Create the shared legend
-legend <- legendGrob("topright",
-                     legend = c("Electricity", "Gas"),
-                     col = c("red", "orange"),
-                     pch = 20,
-                     pt.cex = 3,
-                     cex = 0.8,  # Adjust font size
-                     text.col = c("red", "orange"),
-                     horiz = FALSE,
-                     inset = c(0.05, 0.05)  # Adjust the distance from the plot
-)
-
-# Arrange the faceit plots in a grid
-faceit_grid <- do.call(grid.arrange, c(faceit_plots, ncol = 2))
-
-# Combine the faceit grid and the legend
-grid_combined <- grid.arrange(faceit_grid, legend, ncol = 2, widths = c(4, 1))
-
-# Display the combined grid
-grid_combined
-
 ######@@@@@@AM1
-library(igraph)
+# Define the AM matrices
+AM_matrices <- list(AM1 = AM1, AM2 = AM2, AM3 = AM3, AM4 = AM4, AM5 = AM5)
 
 # Get AM1
 AM1 <- AM_matrices$AM1
@@ -291,34 +209,48 @@ AM1 <- AM_matrices$AM1
 # Convert AM1 to a regular matrix
 AM1_matrix <- as.matrix(AM1)
 
-# Create an empty adjacency matrix to store differing edges
-differing_edges <- matrix(0, nrow = dim(AM1)[1], ncol = dim(AM1)[2])
+# Create an empty dense matrix to store differing edges
+differing_edges <- matrix(0, nrow = nrow(AM1_matrix), ncol = ncol(AM1_matrix))
 
-# Compare AM1 with other AM matrices
+# Optionally convert the dense matrix to a sparse matrix (if needed)
+differing_edges_sparse <- as(differing_edges, "dgCMatrix")
+
+# Initialize the differing_edges matrix with zeros of the same dimensions as AM1_matrix
+differing_edges <- matrix(0, nrow = nrow(AM1_matrix), ncol = ncol(AM1_matrix))
+
 for (i in 1:length(AM_matrices)) {
   if (i != 1) {
-    # Convert the current AM matrix to a regular matrix
     AM_matrix <- as.matrix(AM_matrices[[i]])
     
-    # Find differing edges
-    differing_edges <- differing_edges + (AM1_matrix != AM_matrix)
+    # Check if both matrices have the same dimensions
+    if (identical(dim(AM1_matrix), dim(AM_matrix))) {
+      differing_edges <- differing_edges + (AM1_matrix != AM_matrix)
+    } else {
+      warning(paste("Matrix", i, "has different dimensions and is skipped."))
+      # Print the dimensions of the matrix causing the issue
+      print(dim(AM_matrix))
+    }
   }
 }
+
+# Convert the differing_edges matrix to a dense matrix
+differing_edges <- as.matrix(differing_edges)
+
+# Calculate the sum of differing edges per column (nodes)
+differing_edges_sum_per_node <- colSums(differing_edges)
+
+# Get the indices of nodes with differing edges
+differing_nodes <- which(differing_edges_sum_per_node > 0)
 
 # Create a graph object from AM1
 g <- graph_from_adjacency_matrix(AM1_matrix, mode = "directed")
 
-# Get the nodes with differing edges
-differing_nodes <- V(g)[rowSums(differing_edges) > 0]
-
 # Set node labels based on index
 V(g)$label <- ifelse(as.numeric(V(g)) <= 75, "E", "G")
 
-# Set node color for differing nodes
+# Set node color for differing nodes, E, and G nodes
 node_colors <- rep("blue", vcount(g))
 node_colors[V(g) %in% differing_nodes] <- "yellow"
-
-# Set node color for E and G nodes
 node_colors[V(g)$label == "E"] <- "red"
 
 # Set edge color and width
@@ -327,28 +259,164 @@ edge_widths <- ifelse(differing_edges > 0, 2, 1)
 
 # Plot the graph
 plot(g,
-     vertex.size = 05,
+     vertex.size = 5,
      vertex.label = V(g)$label,
      vertex.label.cex = 0.5,
      vertex.label.color = "black",
      vertex.frame.color = "transparent",
-     vertex.color = node_colors,  # Set node color
+     vertex.color = node_colors,
      edge.color = edge_colors,
      edge.width = edge_widths,
      edge.arrow.size = 0.1,
      edge.arrow.width = 5,
      main = "AM1",
-     #layout = layout_with_fr(g)
      layout = layout_randomly(g)
 )
 
 # Create the legend
 legend("topright",
-       legend = c("E (Electricity)", "G (Gas)", "Differing Nodes"),
-       fill = c("red", "blue", "yellow")
-      # border = NA,
-       #bg = "white"
+       legend = c("E (Electricity)", "G (Gas)", "Differing Edges"),
+       fill = c("red", "blue", "yellow"),
+       cex = 0.6
 )
+
+###########@@@@@@ Final Code For All AM's Comparison with AM1 
+
+# Function to compare and plot adjacency matrices
+compareAndPlotAdjacencyMatrix <- function(AM1, AM, file_name) {
+  # Extract edge weights from AM1 and the other AM
+  AM1_matrix <- as.matrix(as_adjacency_matrix(AM1))
+  AM1_weights <- E(AM1)$weight
+  AM_matrix <- as.matrix(as_adjacency_matrix(AM))
+  AM_weights <- E(AM)$weight
+  
+  # Compare AM1 and the other AM edge weights
+  differing_edges <- (AM1_weights != AM_weights)
+  
+  # Create a graph object from AM1
+  g <- graph_from_adjacency_matrix(AM1_matrix, mode = "directed")
+  
+  # Set node labels based on index
+  V(g)$label <- ifelse(as.numeric(V(g)) <= 75, "E", "G")
+  
+  # Get the indices of gas and electricity nodes
+  gas_nodes <- V(g)[V(g)$label == "G"]
+  electricity_nodes <- V(g)[V(g)$label == "E"]
+  
+  # Set node colors for gas and electricity nodes
+  node_colors <- rep("blue", vcount(g))
+  node_colors[gas_nodes] <- "black"
+  node_colors[electricity_nodes] <- "red"
+  
+  # Set edge colors based on differing edges
+  edge_colors <- ifelse(differing_edges, "red", "green")
+  edge_widths <- ifelse(differing_edges, 1, 2)
+  
+  # Plot the graph
+  plot(g,
+       vertex.size = 5,
+       vertex.label = V(g)$label,
+       vertex.label.cex = 0.5,
+       vertex.label.color = "white",
+       vertex.frame.color = "transparent",
+       vertex.color = node_colors,
+       edge.color = edge_colors,
+       edge.width = edge_widths,
+       edge.arrow.size = 0.1,
+       edge.arrow.width = 2,
+       main = paste("Comparison of AM1 and", file_name),
+       layout = layout_randomly(g)
+  )
+  
+  # Create the legend
+  legend("topright",
+         legend = c("Electricity Node", "Gas Node", "Same Edge Weight", "Different Edge Weight"),
+         fill = c("red", "black", "green", "red"),
+         cex = 0.5  # Adjust the size of the legend labels (smaller value for smaller text)
+  )
+}
+
+AM_matrices <- list(AM1 = AM1, AM2 = AM2, AM3 = AM3, AM4 = AM4, AM5 = AM5)
+
+# Compare and plot AM2 with AM1
+compareAndPlotAdjacencyMatrix(AM1, AM2, "AM2")
+
+# Compare and plot AM3 with AM1
+compareAndPlotAdjacencyMatrix(AM1, AM3, "AM3")
+
+# Compare and plot AM4 with AM1
+compareAndPlotAdjacencyMatrix(AM1, AM4, "AM4")
+
+# Compare and plot AM5 with AM1
+compareAndPlotAdjacencyMatrix(AM1, AM5, "AM5")
+
+###############
+
+###### Final Code for all the possible AM's Pairs 
+
+# Function to compare and plot adjacency matrices
+compareAndPlotAdjacencyMatrix <- function(AMi, AMj, file_name) {
+  # Extract edge weights from AMi and AMj
+  AMi_matrix <- as.matrix(as_adjacency_matrix(AMi))
+  AMi_weights <- E(AMi)$weight
+  AMj_matrix <- as.matrix(as_adjacency_matrix(AMj))
+  AMj_weights <- E(AMj)$weight
+  
+  # Compare AMi and AMj edge weights
+  differing_edges <- (AMi_weights != AMj_weights)
+  
+  # Create a graph object from AMi
+  g <- graph_from_adjacency_matrix(AMi_matrix, mode = "directed")
+  
+  # Set node labels based on index
+  V(g)$label <- ifelse(as.numeric(V(g)) <= 75, "E", "G")
+  
+  # Get the indices of gas and electricity nodes
+  gas_nodes <- V(g)[V(g)$label == "G"]
+  electricity_nodes <- V(g)[V(g)$label == "E"]
+  
+  # Set node colors for gas and electricity nodes
+  node_colors <- rep("blue", vcount(g))
+  node_colors[gas_nodes] <- "black"
+  node_colors[electricity_nodes] <- "red"
+  
+  # Set edge colors based on differing edges
+  edge_colors <- ifelse(differing_edges, "red", "green")
+  edge_widths <- ifelse(differing_edges, 1, 2)
+  
+  # Plot the graph
+  plot(g,
+       vertex.size = 5,
+       vertex.label = V(g)$label,
+       vertex.label.cex = 0.5,
+       vertex.label.color = "white",
+       vertex.frame.color = "transparent",
+       vertex.color = node_colors,
+       edge.color = edge_colors,
+       edge.width = edge_widths,
+       edge.arrow.size = 0.1,
+       edge.arrow.width = 2,
+       main = paste("Comparison of AM", file_name),
+       layout = layout_randomly(g)
+  )
+  
+  # Create the legend
+  legend("topright",
+         legend = c("Electricity Node", "Gas Node", "Same Edge Weight", "Different Edge Weight"),
+         fill = c("red", "black", "green", "red"),
+         cex = 0.5  # Adjust the size of the legend labels (smaller value for smaller text)
+  )
+}
+#### make general statements like compareAndPlotAdjacencyMatrix(AMi, AMj, "AMi and AMj Comparison")
+
+# Compare and plot AM1 with AM2
+compareAndPlotAdjacencyMatrix(AM5, AM3, "AM5 and AM3 Comparison")
+
+# Compare and plot AM2 with AM3
+compareAndPlotAdjacencyMatrix(AM2, AM3, "AM2 and AM3 Comparison")
+
+# Compare and plot AM4 with AM5
+compareAndPlotAdjacencyMatrix(AM4, AM5, "AM4 and AM5 Comparison")
 
 
                   ###########################################
