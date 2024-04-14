@@ -1,2 +1,2 @@
 # AI-Energy
-data and codes for AI-Sustein project tasks
+data and codes for the paper 'Multilayer Analysis of Energy Networks'
