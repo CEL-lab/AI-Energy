@@ -7,12 +7,15 @@ This repository contains the supporting code and data for the research paper tit
 - `codes/`
   - `multilayer_code/` : Contains scripts for the centrality and robustness metrics applied to the multilayer network model.
   - `multiplex_code/` : Contains scripts for the centrality and robustness metrics applied to the multiplex network model.
+    
 - `data/` : Contains datasets used for constructing the multilayer and multiplex networks.
   - `multilayer_data/` : Contains the data for the multilayer network model.
   - `multiplex_data/` : Contains the data for the multiplex network model.
+    
 - `figures/` : Generated figures and visualizations from the analysis.
    - `ML/` : Contains the network and centrality metrics figures applied to the multilayer network model.
    - `MP/` : Contains the network and centrality metrics figures applied to the multiplex network model.
+     
 ## Centrality and Robustness Metrics
 Centrality metrics include Closeness, Degree, Eigenvector, PageRank, and Random Walk centrality measures. Robustness evaluations involve simulations of random and targeted attacks and analysis of network navigability through coverage evolution metrics.
 
