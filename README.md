@@ -35,4 +35,7 @@ Contributions to this repository are welcome. Please fork the repository and sub
 The code and data are provided under an open license for academic and non-commercial use.
 
 ## Citation
-If you use this paper's data, code, or findings, please cite our work: Kazim et al. 
+If you use the code or data in this repository in your work, please cite the following paper:
+
+Kazim, M., Pirim, H., Shi, S., & Wu, D. (2024). Multilayer Analysis of Energy Networks. *Sustainable Energy, Grids and Networks*. Available at: https://www.sciencedirect.com/science/article/pii/SxxxxxxxXxxxxxxxxx
+
