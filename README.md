@@ -5,9 +5,13 @@ This repository contains the supporting code and data for the research paper tit
 
 ## Repository Structure
 - `codes/`
-  - `multilayer/` : Contains scripts for the centrality and robustness metrics applied to the multilayer network model.
-  - `multiplex/` : Contains scripts for the centrality and robustness metrics applied to the multiplex network model.
+  - `multilayer_code/` : Contains scripts for the centrality and robustness metrics applied to the multilayer network model.
+  - `multiplex_code/` : Contains scripts for the centrality and robustness metrics applied to the multiplex network model.
 - `data/` : Contains datasets used for constructing the multilayer and multiplex networks.
+  - `multilayer_data/` : Contains the data for the multilayer network model.
+  - `multiplex_data/` : Contains the data for the multiplex network model.
+
+   
 - `figures/` : Generated figures and visualizations from the analysis.
 
 ## Centrality and Robustness Metrics
@@ -29,4 +33,4 @@ Contributions to this repository are welcome. Please fork the repository and sub
 The code and data are provided under an open license for academic and non-commercial use.
 
 ## Citation
-If you use this paper's data, code, or findings, please cite our work as follows: Kazim et al. 
+If you use this paper's data, code, or findings, please cite our work: Kazim et al. 
