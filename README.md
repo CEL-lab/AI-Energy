@@ -34,8 +34,13 @@ Contributions to this repository are welcome. Please fork the repository and sub
 ## License
 The code and data are provided under an open license for academic and non-commercial use.
 
-## Citation
-If you use the code or data in this repository in your work, please cite the following paper:
+### Citation
 
-Kazim, M., Pirim, H., Shi, S., & Wu, D. (2024). Multilayer Analysis of Energy Networks. *Sustainable Energy, Grids and Networks*. Available at: https://www.sciencedirect.com/science/article/pii/SxxxxxxxXxxxxxxxxx
+Muhammad Kazim, Harun Pirim, Shuomang Shi, Di Wu, "Multilayer analysis of energy networks," *Sustainable Energy, Grids and Networks*, vol. 39, 2024, 101407, ISSN 2352-4677, [https://doi.org/10.1016/j.segan.2024.101407](https://doi.org/10.1016/j.segan.2024.101407). Available at: [https://www.sciencedirect.com/science/article/pii/S235246772400136X](https://www.sciencedirect.com/science/article/pii/S235246772400136X).
+
+**Abstract:**
+Modern interconnected and vulnerable energy infrastructures highlight the critical need for resilience and robustness to maintain the functioning of modern societies amidst growing environmental and operational challenges. This study introduces both multilayer and multiplex network analysis of Belgium’s electricity and gas systems, addressing the complex interdependence inherent in such infrastructure. The resilience is evaluated through random and targeted disruptions, while the robustness is assessed by employing the Molloy–Reed criteria for structural integrity and setting minimum operational thresholds for continuity. Multiplex layer similarities are assessed and subnetworks are identified. The coverage evolution metric quantifies the network’s adaptability under various disruption scenarios. Belgium’s energy infrastructure is used as a case study to uncover critical nodes from different centrality perspectives whose stability is essential for overall network resilience and identify vulnerabilities to disruptions, whether random or targeted. Our insights into the structural robustness, cluster cohesion, and Navigability of energy networks pave the way for more informed decisions in energy infrastructure planning and complex systems management, offering valuable lessons that can be applied globally.
+
+**Keywords:** Multiplex networks, Multilayer networks, Centrality measures, Network robustness, Energy networks, Complex systems, Navigability
+
 
