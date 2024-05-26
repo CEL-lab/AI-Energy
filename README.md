@@ -36,7 +36,7 @@ The code and data are provided under an open license for academic and non-commer
 
 ## Citation
 If you use our code or data please cite the paper as: 
-Muhammad Kazim, Harun Pirim, Shuomang Shi, Di Wu, "Multilayer analysis of energy networks," *Sustainable Energy, Grids and Networks*, vol. 39, 2024, 101407, ISSN 2352-4677, [https://doi.org/10.1016/j.segan.2024.101407](https://doi.org/10.1016/j.segan.2024.101407). Available at: [https://www.sciencedirect.com/science/article/pii/S235246772400136X](https://www.sciencedirect.com/science/article/pii/S235246772400136X).
+Muhammad Kazim, Harun Pirim, Shuomang Shi, Di Wu, "Multilayer analysis of energy networks," *Sustainable Energy, Grids and Networks*, vol. 39, 2024, 101407, ISSN 2352-4677, [https://doi.org/10.1016/j.segan.2024.101407](https://doi.org/10.1016/j.segan.2024.101407). 
 
 
 
