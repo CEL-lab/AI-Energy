@@ -63,7 +63,7 @@ MD_length <- GetMultiDegreeSum(SA_length, Layers, Nodes, isDirected = TRUE)
 
 #### Introduce Disruption Logic ####
 # Example disruption: remove a percentage of random nodes
-set.seed(123) # for reproducibility
+set.seed(43) # for reproducibility
 disruption_percentage <- 0.1 # 10% of nodes
 num_nodes_to_remove <- floor(Nodes * disruption_percentage)
 
