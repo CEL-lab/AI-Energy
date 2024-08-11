@@ -61,7 +61,26 @@ MD_length <- GetMultiDegreeSum(SA_length, Layers, Nodes, isDirected = TRUE)
 #ordered_indices <- order(AC_flow, decreasing = TRUE)
 #print(AC_flow[ordered_indices])
 
+#### Introduce Disruption Logic ####
+# Example disruption: remove a percentage of random nodes
+set.seed(123) # for reproducibility
+disruption_percentage <- 0.1 # 10% of nodes
+num_nodes_to_remove <- floor(Nodes * disruption_percentage)
 
+# Randomly select nodes to remove
+nodes_to_remove <- sample(1:Nodes, num_nodes_to_remove)
+
+# Set the rows and columns corresponding to the selected nodes to zero in the supra-adjacency matrices
+for (node in nodes_to_remove) {
+  SA_flow[node, ] <- 0
+  SA_flow[, node] <- 0
+  SA_length[node, ] <- 0
+  SA_length[, node] <- 0
+}
+
+# Recompute the Supra-transition matrices post-disruption
+TM_flow_disrupted <- BuildSupraTransitionMatrixFromSupraAdjacencyMatrix(SA_flow, Layers, Nodes)
+TM_length_disrupted <- BuildSupraTransitionMatrixFromSupraAdjacencyMatrix(SA_length, Layers, Nodes)
 
                                           ######################################
                                           ######## Coverage Evolution ##########                  
@@ -180,8 +199,9 @@ GetCoverageEvolutionMultilayer_modified <- function(SupraTransitionMatrix,
   return(rho.df)
 }
 
-####@@@@@
-CEM <- GetCoverageEvolutionMultilayer_modified(TM_length, Layers,Nodes,1:20)
+### Coverage Evolution Analysis (post-disruption)
+
+CEM <- GetCoverageEvolutionMultilayer_modified(TM_length_disrupted, Layers, Nodes, 1:20)
 print(CEM)
 
                                           ######################################
